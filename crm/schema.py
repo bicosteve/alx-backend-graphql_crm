@@ -112,3 +112,47 @@ class Mutation(graphene.ObjectType):
     bulk_create_customers = CreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+
+
+class Query(graphene.ObjectType):
+    customers = graphene.List(CustomerType)
+    customer = graphene.Field(CustomerType, id=graphene.Int(required=True))
+
+    products = graphene.List(ProductType)
+    product = graphene.Field(ProductType, id=graphene.Int(required=True))
+
+    orders = graphene.List(OrderType)
+    order = graphene.Field(OrderType, id=graphene.Int(required=True))
+
+    def resolve_customers(self, info):
+        return Customer.objects.all()
+
+    def resolve_customer(self, info, id):
+        try:
+            return Customer.objects.get(pk=id)
+        except Customer.DoesNotExist:
+            return None
+
+    def resolve_products(self, info):
+        return Product.objects.all()
+
+    def resolve_product(self, info, id):
+        try:
+            return Product.objects.get(pk=id)
+        except Product.DoesNotExist:
+            return None
+
+    def resolve_orders(self, info):
+        return (
+            Order.objects.prefetch_related("products").select_related("customer").all()
+        )
+
+    def resolve_order(self, info, id):
+        try:
+            return (
+                Order.objects.select_related("customer")
+                .prefetch_related("products")
+                .get(pk=id)
+            )
+        except Order.DoesNotExist:
+            return None
