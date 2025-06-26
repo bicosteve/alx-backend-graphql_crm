@@ -3,10 +3,12 @@ from time import timezone
 
 
 import graphene
+from graphene_django.filter import DjangoFilterConnectionField
 from rest_framework import status
 
 from .models import Customer, Product, Order
 from .types import CustomerType, BulkCustomerInput, ProductType, OrderType
+from .filters import CustomerFilter, ProductFilter, OrderFilter
 
 
 #  Mutations
@@ -115,13 +117,13 @@ class Mutation(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    customers = graphene.List(CustomerType)
+    customers = graphene.List(CustomerType, filterset_class=CustomerFilter)
     customer = graphene.Field(CustomerType, id=graphene.Int(required=True))
 
-    products = graphene.List(ProductType)
+    products = graphene.List(ProductType, filterset_class=ProductFilter)
     product = graphene.Field(ProductType, id=graphene.Int(required=True))
 
-    orders = graphene.List(OrderType)
+    orders = graphene.List(OrderType, filterset_class=OrderFilter)
     order = graphene.Field(OrderType, id=graphene.Int(required=True))
 
     def resolve_customers(self, info):

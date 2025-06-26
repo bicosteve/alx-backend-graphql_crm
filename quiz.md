@@ -239,3 +239,115 @@ Repo:
 
 
 ```
+
+```bash
+2. Task 2: Implement Complex GraphQL Mutations for CRM
+
+
+Objective:
+
+Enhance the CRM system by adding GraphQL mutations to create Customer, Product, and Order instances, including bulk customer creation and nested order creation with product associations, with robust validation and error handling.
+Instructions
+
+    Define the Mutations
+        In crm/schema.py, create the following mutation classes:
+            CreateCustomer
+            Takes name (required, string), email (required, unique email), and phone (optional, string) as inputs.
+            Validates that the email is unique and the phone number (if provided) matches a valid format (e.g., +1234567890 or 123-456-7890).
+            Saves the new customer to the database.
+            Returns the created customer object and a success message.
+            Think: How will you handle validation errors (e.g., duplicate email)?
+            BulkCreateCustomers
+            Takes a list of customer inputs, each containing name, email, and optional phone.
+            Validates each customer’s data and creates them in a single transaction.
+            Returns a list of created customers and any errors for failed creations.
+            Challenge: Ensure partial success (valid customers are created even if some fail).
+            CreateProduct
+            Takes name (required, string), price (required, positive decimal), and stock (optional, positive integer, default 0).
+            Validates that the price is positive and the stock is non-negative.
+            Saves the new product to the database.
+            Returns the created product object.
+            CreateOrder
+            Takes customer_id (required, ID of an existing customer), product_ids (required, list of product IDs), and optional order_date (defaults to now).
+            Validates that the customer and products exist and that at least one product is provided.
+            Creates an order, associates the specified products, and calculates total_amount as the sum of product prices.
+            Returns the created order object, including nested customer and product details.
+            Think: How will you ensure the total_amount is accurate and consistent?
+            Challenge: Implement custom error handling for all mutations, returning user-friendly error messages (e.g., “Email already exists” or “Invalid product ID”).
+
+    Add Mutations to the Schema
+        In crm/schema.py, define a Mutation class.
+        Add fields for each mutation:
+            create_customer: Calls CreateCustomer.
+            bulk_create_customers: Calls BulkCreateCustomers.
+            create_product: Calls CreateProduct.
+            create_order: Calls CreateOrder.
+        Hint: Use Graphene’s Field and List types appropriately for input and output.
+
+    Integrate Into Main Schema
+        In graphql_crm/schema.py:
+            Import Query and Mutation from crm.schema.
+            Combine them into the project’s main schema to support both queries and mutations.
+        Think: How will you ensure the schema handles nested objects and errors gracefully?
+
+    Checkpoint
+        Run the following GraphQL mutations at /graphql to verify your setup:
+
+
+Repo:
+
+    GitHub repository: alx-backend-graphql_crm
+    File: schema.py
+
+
+```
+
+```bash
+3. Task 3: Add Filtering
+
+Objective:
+
+Allow users to search for customers using filters such as emails or names
+Instructions
+
+    Ensure django-filter is Installed
+        Confirm that django-filter is installed (previously done with pip install django-filter).
+        Add 'django_filters' to INSTALLED_APPS in your Django settings if not already present.
+
+    Create Custom Filter Classes
+        In a new file crm/filters.py, define the following filter classes using django-filter:
+
+    CustomerFilter: - name: Case-insensitive partial match (using icontains). - email: Case-insensitive partial match (using icontains). - created_at: Date range filter (e.g., created_at__gte and created_at__lte). - Challenge: Add a custom filter to match customers with a specific phone number pattern (e.g., starts with +1).
+
+    ProductFilter: - name: Case-insensitive partial match. - price: Range filter (e.g., price__gte, price__lte). - stock: Exact match or range filter (e.g., stock__gte, stock__lte). - Think: How can you filter products with low stock (e.g., stock < 10)?
+
+    OrderFilter: - total_amount: Range filter (e.g., total_amount__gte, total_amount__lte). - order_date: Date range filter. - customer_name: Filter orders by customer’s name (case-insensitive partial match, using related field lookup). - product_name: Filter orders by product’s name (case-insensitive partial match, using related field lookup). - Challenge: Allow filtering orders that include a specific product ID.
+
+    Hint: Use django-filter’s FilterSet class and define Meta classes to specify the model and fields.
+
+    Integrate Filters with GraphQL
+        In crm/schema.py, update the GraphQL Query class to support filtered queries:
+            all_customers: Accepts filter arguments for name, email, created_at__gte, created_at__lte, and phone_pattern.
+            all_products: Accepts filter arguments for name, price__gte, price__lte, stock__gte, and stock__lte.
+            all_orders: Accepts filter arguments for total_amount__gte, total_amount__lte, order_date__gte, order_date__lte, customer_name, and product_name.
+            Challenge: Add an order_by argument to sort results (e.g., by name, price, or order_date in ascending/descending order).
+        Use Graphene-Django’s DjangoFilterConnectionField to integrate the filter classes with GraphQL.
+        Define custom input types (e.g., using graphene.InputObjectType) for complex filters like date ranges or related field lookups.
+        Think: How will you handle nested filters for related models (e.g., filtering orders by customer name)?
+
+    Update the Schema
+        Ensure the Query class in crm/schema.py is updated to include the filtered fields.
+        In graphql_crm/schema.py, verify that the main schema includes the updated Query class from crm.schema.
+        Hint: Test the schema to ensure filters and sorting work correctly.
+
+    Checkpoint
+        Run the following GraphQL queries at /graphql to verify your filtering setup:
+
+
+
+Repo:
+
+    GitHub repository: alx-backend-graphql_crm
+    File: crm/schema.py, alx-backend-graphql_crm/settings.py, crm/filters.py
+
+```
