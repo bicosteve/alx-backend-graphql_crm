@@ -24,7 +24,7 @@ def log_crm_heartbeat():
         logging.warning(f"GraphQL heartbeat check failed: {e}")
 
 
-def update_low_stock():
+def updatelowstock():
     # GraphQL mutation string
     mutation = """
     mutation {
@@ -47,7 +47,7 @@ def update_low_stock():
             data = response.json().get("data", {}).get("updateLowStockProducts", {})
             timestamp = datetime.datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
 
-            with open("/tmp/low_stock_updates_log.txt", "a") as log:
+            with open("/tmp/lowstockupdates_log.txt", "a") as log:
                 for product in data.get("updatedProducts", []):
                     log.write(
                         f"{timestamp} - Updated: {product['name']} to {product['stock']}\n"
