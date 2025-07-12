@@ -3,5 +3,5 @@ djangorestframework
 django-filter
 graphene-django
 gql
-django-crontab
+django-crontab==0.7.1
 requests
