@@ -22,3 +22,37 @@ def log_crm_heartbeat():
             print("GraphQL endpoint is responsive.")
     except Exception as e:
         logging.warning(f"GraphQL heartbeat check failed: {e}")
+
+
+def update_low_stock():
+    # GraphQL mutation string
+    mutation = """
+    mutation {
+      updateLowStockProducts {
+        updatedProducts {
+          name
+          stock
+        }
+        success
+      }
+    }
+    """
+
+    try:
+        response = requests.post(
+            "http://localhost:8000/graphql", json={"query": mutation}
+        )
+
+        if response.status_code == 200:
+            data = response.json().get("data", {}).get("updateLowStockProducts", {})
+            timestamp = datetime.datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
+
+            with open("/tmp/low_stock_updates_log.txt", "a") as log:
+                for product in data.get("updatedProducts", []):
+                    log.write(
+                        f"{timestamp} - Updated: {product['name']} to {product['stock']}\n"
+                    )
+        else:
+            logging.error(f"Mutation failed with status {response.status_code}")
+    except Exception as e:
+        logging.warning(f"Exception during update_low_stock: {e}")
