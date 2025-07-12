@@ -22,3 +22,29 @@ Repo:
 GitHub repository: alx-backend-graphql_crm
 File: clean_inactive_customers.sh, customer_cleanup_crontab.txt
 ```
+
+```bash
+1. Schedule a GraphQL-Based Order Reminder Script
+
+Objective
+Create a Python script that uses a GraphQL query to find pending orders (order_date within the last week) and logs reminders, scheduled to run daily using a cron job.
+
+Instructions
+Create a Python Script:
+Create send_order_reminders.py in crm/cron_jobs.
+The script should:
+Use the gql library to query the GraphQL endpoint (http://localhost:8000/graphql) for orders with order_date within the last 7 days.
+Log each order’s ID and customer email to /tmp/order_reminders_log.txt with a timestamp.
+Print "Order reminders processed!"to the console.
+
+Create a Crontab Entry:
+
+Create crm/cron_jobs/order_reminders_crontab.txt with a single line to run the script daily at 8:00 AM.
+
+Ensure no extra newlines.
+
+Repo:
+
+GitHub repository: alx-backend-graphql_crm
+File: send_order_reminders.py, order_reminders_crontab.txt
+```
