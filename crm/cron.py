@@ -24,7 +24,7 @@ def log_crm_heartbeat():
         logging.warning(f"GraphQL heartbeat check failed: {e}")
 
 
-def updatelowstock():
+def update_low_stock():
     # GraphQL mutation string
     mutation = """
     mutation {

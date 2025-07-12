@@ -3,5 +3,7 @@ djangorestframework
 django-filter
 graphene-django
 gql
-django-crontab==0.7.1
+django-crontab
 requests
+celery
+django-celery-beat
