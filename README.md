@@ -48,3 +48,33 @@ Repo:
 GitHub repository: alx-backend-graphql_crm
 File: send_order_reminders.py, order_reminders_crontab.txt
 ```
+
+```bash
+2. Heartbeat Logger with django-crontab
+
+Objective
+Implement a django-crontab job that logs a heartbeat message every 5 minutes to confirm the CRM application’s health, integrating with the GraphQL schema.
+
+Instructions
+Install django-crontab:
+Add django-crontab to requirements.txt.
+Add django_crontab to INSTALLED_APPS incrm/settings.py.
+Define the Cron Job:
+In crm/cron.py, define a function log_crm_heartbeat that:
+Logs a message in the formatDD/MM/YYYY-HH:MM:SS CRM is alive to/tmp/crm_heartbeat_log.txt.
+Appends to the file (does not overwrite).
+
+Optionally, queries the GraphQL hello field to verify the endpoint is responsive.
+
+Configure the Cron Job:
+In crm/settings.py, add to CRONJOBS:
+
+CRONJOBS = [
+    ('*/5 * * * *', 'crm.cron.log_crm_heartbeat'),
+]
+
+Repo:
+
+GitHub repository: alx-backend-graphql_crm
+File: crm/cron.py, crm/settings.py, requirements.txt
+```

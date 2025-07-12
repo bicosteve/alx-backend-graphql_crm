@@ -9,6 +9,8 @@ djangorestframework = "*"
 django-filter = "*"
 graphene-django = "*"
 gql = "*"
+django-crontab = "*"
+requests = "*"
 
 [dev-packages]
 
